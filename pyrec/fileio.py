@@ -5,7 +5,8 @@ def top_path(OS_type):
     path = ''
     if(OS_type == 'windows'):
         path = os.path.abspath(__file__).split(os.sep)[0] + os.sep  # window의 경우 root의 위에 존재하는 drive의 값을 가져온다.
-    # TODO : linux 환경 check
+    else:  # mac, ubuntu
+        path = os.sep
     return path
 
 
@@ -46,13 +47,15 @@ class OpenFile():
         # TODO : encoding type 지정
 
         dump = self.fd.read()
-        if(data_type == 'application/json'):
+        if(data_type == 'text/plain' and self.open_type == 'r'):
+            pass
+        elif(data_type == 'application/json' and self.open_type == 'r'):
             import json
             dump = json.loads(dump)
 
         return dump
-
     # TODO : readuntil 함수
+
 
     def write(self, dump, data_type):
         if(self.open_type != 'w' and self.open_type != 'wb'):
@@ -62,9 +65,11 @@ class OpenFile():
             data_type = 'text/plain'
         # TODO : encoding type 지정
 
+        if(data_type == 'text/plain' and self.open_type == 'w'):
+            self.fd.write(dump)
         if(data_type == 'json'):
             import json
             dump = json.dumps(dump)
-        self.fd.write(dump)
+            self.fd.write(dump)
 
         return 'Write success'

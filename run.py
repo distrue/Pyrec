@@ -1,5 +1,6 @@
 import os
 import pyrec
+# import pyrec.command_plugins
 import logging
 import sys
 import signal
@@ -16,14 +17,7 @@ if __name__ == '__main__' :
     logging.basicConfig(**kw)
     logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
     logger.info('Pyrec V0.1')
-    state = pyrec.state.State()
-    while(True):
-        print('$ ', end = '')
-        try:
-            in_str = input()
-            state = pyrec.interact.function_connect(state, in_str)
-        except EOFError:
-            break
+    pyrec.manager.run()
 
 """
     with pyrec.fileio.OpenFile() as f:

@@ -1,6 +1,6 @@
 from .interact import function_connect, State
 import importlib
-
+from . import command_plugins
 
 def run():
     #command_plugins = importlib.import_module('')

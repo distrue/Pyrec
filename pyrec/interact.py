@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 class State(object):
     def __init__(self):
         self.dir_list = []
-        self.file_type = ''
 
 
 def command_handler(matchstr):

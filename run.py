@@ -18,10 +18,3 @@ if __name__ == '__main__' :
     logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
     logger.info('Pyrec V0.1')
     pyrec.manager.run()
-
-"""
-    with pyrec.fileio.OpenFile() as f:
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(file_path, data, 'd.json')
-        f.open(file_path, 'r')
-"""

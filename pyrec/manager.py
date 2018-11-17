@@ -1,10 +1,11 @@
 from .interact import function_connect, State
 import importlib
-from . import command_plugins
+
 
 def run():
-    #command_plugins = importlib.import_module('')
     state = State()
+    from . import command_plugins
+    #command_plugins = importlib.import_module('')
     while(True):  # console
         print('$ ', end = '')
         try:

@@ -9,7 +9,21 @@ logger = logging.getLogger(__name__)
 
 @command_handler('open_dir')
 def open_dir(state, query_list):
-    return state
+    try:
+        if(os.path.exists(query_list[0])):
+            pyrec_data = os.path.join(query_list[0], '.pyrec')
+            if(not os.path.exists(pyrec_data)):
+                # refresh 호출
+            else:
+                # 
+            # 마지막 load 시간 출력, 변화 있을 경우 refresh 권유!
+        else :
+            logger.info("file does not exists in " + query_list[0])
+            # 상대 경로 이면 절대 경로 요구! -> 이 함수의 help 안에 넣어둔다, 따로 message는 띄우지 않음
+            # error 발생 시 state 변화가 있으면 error 발생시켜 state 변경을 막고, 아닌 경우 내부에서 출력하고, state return
+        return state
+    except Exception as E:
+        raise E
     # query : 절대 경로
     # 내부 절대 경로에서 최상위 폴더에 .pyrec 확인, 없을 경우 생성
     # 생성하는 함수 : package_script_load
@@ -33,7 +47,7 @@ def open_dir(state, query_list):
 - 키워드 검색 시 자동완성 기능 (키워드 묶음을 유기적으로 구성하기 위해 필요)
 """
 # TODO : log의 분리 : 사용자가 접근할 수 있는 log는 log 내의 data 영역
-# 사용자가 작성할 수 있는 log는 log 내의 data 영역 내의 pyrec 폴더
+# 사용자가 작성할 수 있는 log는 log 내의 localdata 영역 내의 pyrec 폴더
 # TODO : 계정 생성 형식으로 바꿔준다. 사용자가 작성할 수 있는 log 자리는 계정 이름으로 한다.
 
 
@@ -56,19 +70,8 @@ def refresh(state, query_list):
     """
 
 
-@command_handler('now_dir')
-def now_dir(state, query_list):
-    prstr = ''
-    for i in range(0, len(state.dir_list)):
-        prstr = prstr + state.dir_list[i] + os.sep
-    logger.info('location : log' + os.sep + prstr)
-    prstr = os.listdir(os.path.join(os.path.dirname(root_path), 'log', prstr))
-    logger.info(prstr)
-    return state
-
-
 @command_handler('quit')
 def quit(state, query_list):
     logger.info('System quit')
     sys.exit()
-    return 'ERROR?'
+    return 'Quit ERROR occured'

@@ -1,6 +1,5 @@
 import os
 import pyrec
-# import pyrec.command_plugins
 import logging
 import sys
 import signal

@@ -9,3 +9,4 @@ def sigint_handler(signum, frame):
     sys.exit()
 
 signal.signal(signal.SIGINT, sigint_handler)  # sigint_handler
+# TODO : windows sigint?

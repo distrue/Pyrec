@@ -3,6 +3,7 @@ import sys
 import logging
 logger = logging.getLogger(__name__)
 from .fileio import OpenFile
+from .signals import QueryError
 root_path = os.path.dirname(__file__)
 commands = {}
 logger = logging.getLogger(__name__)
@@ -31,26 +32,21 @@ def command_handler(matchstr):
 def function_connect(state, query):
     _query_list = query.split(' ')
     query_list = []
-    for _query in _query_list:
-        if(_query):
-            while(True):
-                if(_query[0] == '\''):
-                    if(_query[-1] == '\''):
-                        _query = _query[1:-2]
-                    else:
-                        raise QueryError # TODO : QueryError signals에 정의
-            query_list.append(_query)
+    try:
+        for _query in _query_list:
+            if(_query):
+                query_list.append(_query)
+                raise QueryError()
+                # query syntax error시 syntax error 발행
+    except QueryError:
+        return state
     try:
         state = commands[query_list[0]](state, query_list)
         return state
+    except KeyError:
+        print("unsensored query [" + query_list[0] + "]")
+        return state
     except Exception as E:
-        if(E == KeyError):
-            print("unsensored query")
-            return state
-        elif(E == QueryError):
-            print("query syntax error")
-            return state
-        # TODO 내부 error의 경우 state 복구? 함수 종료 되지 않으면 state 변경은 필요 없다!
-        else:
-            print("Unexpected Error ", E)
-            return state
+        print("unexpected error")
+        return state
+        # state 가 변하지 않았다고 가정한다.

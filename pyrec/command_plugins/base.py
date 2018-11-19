@@ -13,10 +13,9 @@ def open_dir(state, query_list):
         if(os.path.exists(query_list[0])):
             pyrec_data = os.path.join(query_list[0], '.pyrec')
             if(not os.path.exists(pyrec_data)):
-                # refresh 호출
-            else:
-                # 
-            # 마지막 load 시간 출력, 변화 있을 경우 refresh 권유!
+                print('')
+                # 디렉토리 생성
+            # refresh
         else :
             logger.info("file does not exists in " + query_list[0])
             # 상대 경로 이면 절대 경로 요구! -> 이 함수의 help 안에 넣어둔다, 따로 message는 띄우지 않음

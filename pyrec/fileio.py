@@ -2,11 +2,7 @@ import os
 
 
 def top_path(OS_type):
-    path = ''
-    if(OS_type == 'windows'):
-        path = os.path.abspath(__file__).split(os.sep)[0] + os.sep  # window의 경우 root의 위에 존재하는 drive의 값을 가져온다.
-    else:  # mac, ubuntu
-        path = os.sep
+    path = os.path.abspath(__file__).split(os.sep)[0] + os.sep
     return path
 
 

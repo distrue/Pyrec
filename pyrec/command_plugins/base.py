@@ -7,28 +7,29 @@ from .load import package_script_load
 logger = logging.getLogger(__name__)
 
 
+@command_handler('pwd')
+def pwd(state, query_list):
+    now_path = os.path.dirname(os.path.dirname(__file__))
+    logger.info(now_path)
+    return state
+
+
 @command_handler('open_dir')
 def open_dir(state, query_list):
-    try:
-        if(os.path.exists(query_list[0])):
-            pyrec_data = os.path.join(query_list[0], '.pyrec')
+    with OpenFile() as f:
+        if(os.path.exists(query_list[1])):
+            pyrec_data = os.path.join(query_list[1], '.pyrec')
             if(not os.path.exists(pyrec_data)):
-                print('')
-                # 디렉토리 생성
-            # refresh
+                os.makedirs(pyrec_data)
+            refresh(state, query_list)
         else :
-            logger.info("file does not exists in " + query_list[0])
+            logger.error("file does not exists in : " + query_list[1])
+            logger.info("we need an abspath")
             # 상대 경로 이면 절대 경로 요구! -> 이 함수의 help 안에 넣어둔다, 따로 message는 띄우지 않음
             # error 발생 시 state 변화가 있으면 error 발생시켜 state 변경을 막고, 아닌 경우 내부에서 출력하고, state return
         return state
-    except Exception as E:
-        raise E
-    # query : 절대 경로
-    # 내부 절대 경로에서 최상위 폴더에 .pyrec 확인, 없을 경우 생성
-    # 생성하는 함수 : package_script_load
     # .pyrec 로드
-    # file load 하는 state에 최상위 directory와 내부 directory 분리
-    # 해당 directory가 외부 library인지, 내부 log 안에 있는지 확인
+    # file load 하는 state에 pyrec의 원본 폴더 위치 저장
 
 
 """
@@ -45,23 +46,21 @@ def open_dir(state, query_list):
 /// file 위치로 이동해서 #s_script 부터 #e_script 까지 보여준다.
 - 키워드 검색 시 자동완성 기능 (키워드 묶음을 유기적으로 구성하기 위해 필요)
 """
-# TODO : log의 분리 : 사용자가 접근할 수 있는 log는 log 내의 data 영역
-# 사용자가 작성할 수 있는 log는 log 내의 localdata 영역 내의 pyrec 폴더
-# TODO : 계정 생성 형식으로 바꿔준다. 사용자가 작성할 수 있는 log 자리는 계정 이름으로 한다.
-
-
-@command_handler('load_dir')
-def load_dir(state, query_list):
-    return state
-    # open_dir 에서 로드한 folder의 file 까지 log 저장소에 load
+# TODO : log의 분리 : 사용자가 접근할 수 있는 local folder 필요
 
 
 @command_handler('refresh')
 def refresh(state, query_list):
+    if(not os.path.exists(query_list[1])):
+        logger.error("file does not exists in : " + query_list[1])
+        return state
+    # .pyrec_ignore 추가 필요
+    for file_walker in os.walk(query_list[1]):
+        print(file_walker)
+        # os.walk 실행 시 (위치, [folders], [files]) 의 형태로 전순회 된다.
     return state
     # dir의 전체 내용 reload
-    # 외부 library 인지, 내부 library 인지 확인 필요
-    """
+]    """
     - 대상 folder 전체 순회
     - (기존 사항에 대한 변경 사항 처리 필요)
     - (그냥 지워버리고 새로 작성)

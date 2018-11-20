@@ -13,12 +13,11 @@ class State(object):
     def __init__(self):
         self.open_dir = []  # 현재 open 되어 있는 project들
         self.dir_path = {}  # open 되어 있는 project의 root directory, root directory 안에 .pyrec 폴더를 가짐.
-        # TODO : local_data directory 생성
-        # TODO : 현재 log 안에 있는 data load
+        self.open_dir = ['local']
+        self.dir_path = {'local': '!NotExist!'}
+        # TODO : 원본 file 존재 안할 때 state의 dir_path 변경 필요
         # 저장 위치 : 'local_data': os.path.join(os.path.dirname(__file__), 'log', 'local_data')
         # 저장 위치를 다음과 같이 분리 : log 안에 
-        # - data : local_data와 실제로 옮겨온 project들
-        # - pyrec_load : pyrec syntax를 기준으로 로드해온 key file
 
 
 def command_handler(matchstr):
@@ -36,8 +35,6 @@ def function_connect(state, query):
         for _query in _query_list:
             if(_query):
                 query_list.append(_query)
-                raise QueryError()
-                # query syntax error시 syntax error 발행
     except QueryError:
         return state
     try:
@@ -46,7 +43,9 @@ def function_connect(state, query):
     except KeyError:
         print("unsensored query [" + query_list[0] + "]")
         return state
-    except Exception as E:
+    except QueryError:
+        return state
+    except:
         print("unexpected error")
         return state
         # state 가 변하지 않았다고 가정한다.

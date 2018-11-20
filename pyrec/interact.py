@@ -3,7 +3,7 @@ import sys
 import logging
 logger = logging.getLogger(__name__)
 from .fileio import OpenFile
-from .signals import QueryError
+from .signals import QueryError, getTracebackStr
 root_path = os.path.dirname(__file__)
 commands = {}
 logger = logging.getLogger(__name__)
@@ -41,11 +41,11 @@ def function_connect(state, query):
         state = commands[query_list[0]](state, query_list)
         return state
     except KeyError:
-        print("unsensored query [" + query_list[0] + "]")
+        logger.info("unsensored query [" + query_list[0] + "]")
         return state
     except QueryError:
         return state
     except:
-        print("unexpected error")
+        logger.error(getTracebackStr())
         return state
         # state 가 변하지 않았다고 가정한다.

@@ -1,4 +1,7 @@
 import os
+import logging
+import json
+logger = logging.getlogger(__name__)
 
 
 def top_path(OS_type):
@@ -13,6 +16,7 @@ class OpenFile():
     def __enter__(self):
         self.fd = None
         self.file_path = ''
+        self.EOF = False
         return self  # self를 return 해줘야 with~as구문에서 object를 받을 수 있다.
 
     def __exit__(self, type, value, traceback):
@@ -20,7 +24,7 @@ class OpenFile():
             return
         self.fd.close()
 
-    def open(self, file_abspath, open_type):
+    def open(self, file_abspath, open_type='w'):
         if(self.fd and str(type(self.fd)) == "<class \'_io.TextIOWrapper\'>"):  # if fd is already opening other file
             self.fd.close()
         self.open_type = open_type
@@ -34,23 +38,45 @@ class OpenFile():
             f.close()
         self.fd = open(self.file_path, self.open_type)
 
-    def read(self, data_type):
+    def read(self, data_type='text/plain'):
         if(self.open_type != 'r' and self.open_type != 'rb'):
-            print('File is not opened with read mode')  # TODO : log로 전환
+            logger.error('File is not opened with read mode')
             return
-        if(not data_type):  # TODO : data_type **arg로 전환
-            data_type = 'text/plain'
-        # TODO : encoding type 지정
+        # TODO : encoding type 추가
 
-        dump = self.fd.read()
-        if(data_type == 'text/plain' and self.open_type == 'r'):
-            pass
-        elif(data_type == 'application/json' and self.open_type == 'r'):
-            import json
-            dump = json.loads(dump)
+        if(self.open_type == 'r'):
+            dump = self.fd.read()
+            if(data_type == 'text/plain'):
+                pass
+            elif(data_type == 'application/json'):
+                import json
+                dump = json.loads(dump)
+            else:
+                logger.info('unknown open type; opened by text/plain')
 
         return dump
-    # TODO : readuntil 함수
+
+    def readuntil (self, ustr):
+        if(self.open_type != 'r'):
+            logger.error('only available in open_type')
+            raise Exception
+        if (len(ustr) == 0):
+            return ""
+        nmi = 0  # current non-matching index
+        out = ""
+        while (True):
+            c = self.fd.read(1)
+            if (c == ""):
+                self.EOF = True
+                return out
+            out += c
+            if (c == ustr[nmi]):
+                nmi += 1
+                if (nmi > len(ustr)-1):
+                    return out[:(-1)*len(ustr)]
+            else:
+                nmi = 0
+        return out
 
 
     def write(self, dump, data_type):
@@ -63,8 +89,7 @@ class OpenFile():
 
         if(data_type == 'text/plain' and self.open_type == 'w'):
             self.fd.write(dump)
-        if(data_type == 'json'):
-            import json
+        if(data_type == 'application/json' and self.open_type == 'w'):
             dump = json.dumps(dump)
             self.fd.write(dump)
 

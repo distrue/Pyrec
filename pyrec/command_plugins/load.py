@@ -10,7 +10,7 @@ def package_script_load():
     {“folder1” : {}, “file1” : {}}
     위의 형식으로 최상위 폴더에 대해 저장
     script의 저장형식
-    "name":{“location”:’example’, “keyword”:[“example”, “example”], “inscript”:{}}
+    "name":{"type": "file", “location”:’example’, “keyword”:[“example”, “example”], “inscript”:{}}
     # script 안에 script 가 들어가는 경우 inscript 안에 넣어준다.
 
 

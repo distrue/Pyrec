@@ -5,6 +5,8 @@ from pyrec.interact import command_handler, root_path
 from pyrec.fileio import OpenFile
 from .load import package_script_load
 logger = logging.getLogger(__name__)
+from .parse import lookup_dir
+from pyrec.signals import QueryError
 
 
 @command_handler('pwd')
@@ -17,16 +19,24 @@ def pwd(state, query_list):
 @command_handler('open_dir')
 def open_dir(state, query_list):
     with OpenFile() as f:
+        if(query_list <= 1):
+            QueryError('open_dir', 'missing argument : file_path')
         if(os.path.exists(query_list[1])):
+            if(len(query_list) <= 2):
+                dir_name = 'new'
+                cou = 1
+                now_path = os.path.dirname(os.path.dirname(__file__))
+                log_path = os.path.join(now_path, 'log')
+                while(os.path.exists(os.path.join(log_path, dir_name + str(cou)))):
+                    cou += 1
+                query_list.append(dir_name + str(cou))
             pyrec_data = os.path.join(query_list[1], '.pyrec')
             if(not os.path.exists(pyrec_data)):
                 os.makedirs(pyrec_data)
             refresh(state, query_list)
+            logger.info('new dir created : ' + file_name)
         else :
-            logger.error("file does not exists in : " + query_list[1])
-            logger.info("we need an abspath")
-            # 상대 경로 이면 절대 경로 요구! -> 이 함수의 help 안에 넣어둔다, 따로 message는 띄우지 않음
-            # error 발생 시 state 변화가 있으면 error 발생시켜 state 변경을 막고, 아닌 경우 내부에서 출력하고, state return
+            QueryError('open_dir', "file does not exists in : " + query_list[1] + '\nwe need an abspath')
         return state
     # .pyrec 로드
     # file load 하는 state에 pyrec의 원본 폴더 위치 저장
@@ -51,21 +61,30 @@ def open_dir(state, query_list):
 
 @command_handler('refresh')
 def refresh(state, query_list):
+    if(query_list <= 1):
+        QueryError('refresh', 'missing argument : file_path')
+    elif(query_list <= 2):
+        QueryError('refresh', 'missing argument : file_name')
     if(not os.path.exists(query_list[1])):
         logger.error("file does not exists in : " + query_list[1])
         return state
-    # .pyrec_ignore 추가 필요
-    for file_walker in os.walk(query_list[1]):
-        print(file_walker)
+    ignore_path = os.path.join(query_list[1], '.pyrec', '.ignore')
+    ignore_syntax = []
+    if(os.path.exists(ignore_path)):
+        with OpenFile() as f:
+            f.open(ignore_path, 'r')
+            dump = f.read()
+            ignore_syntax.extend(dump.split('\n'))
+    # for file_walker in os.walk(query_list[1]):
+    #    print(file_walker)
         # os.walk 실행 시 (위치, [folders], [files]) 의 형태로 전순회 된다.
-    return state
-    # dir의 전체 내용 reload
-]    """
-    - 대상 folder 전체 순회
-    - (기존 사항에 대한 변경 사항 처리 필요)
-    - (그냥 지워버리고 새로 작성)
-    - (나중에는 git 처럼 diff check 방식으로)
-    """
+    with OpenFile() as f:
+        now_path = os.path.dirname(os.path.dirname(__file__))
+        log_path = os.path.join(now_path, 'log', query_list[2], 'script_tree.json')
+        f.open(log_path, 'w')
+        dump = lookup_dir(query_list[1], ignore_syntax)
+        f.write(dump, 'application/json')
+        # (나중에는 git 처럼 diff check 방식으로)
 
 
 @command_handler('quit')

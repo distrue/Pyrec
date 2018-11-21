@@ -8,6 +8,7 @@ def run(_script_path):
     global script_path
     script_path = os.path.dirname(_script_path)
     from . import command_plugins
+    state.load()
     #command_plugins = importlib.import_module('')
     while(True):  # console
         print('$ ', end = '')

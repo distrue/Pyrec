@@ -45,7 +45,7 @@ def file_parse(path, d_dict, file_type):
                 break
             dump = f.readuntil(anno[1])
             ndump = dump.split('\n')[0]
-            d_dict.append({'title': ndump, 'data': dump.split(ndump)[1]})
+            d_dict.append({'title': ndump, 'data': ''.join(dump.split(ndump)[1:])})
             if(f.EOF):
                 # TODO : e_script 종료 제대로 되지 않음, error!
                 pass

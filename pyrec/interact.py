@@ -7,17 +7,17 @@ from .signals import QueryError, getTracebackStr
 root_path = os.path.dirname(__file__)
 commands = {}
 logger = logging.getLogger(__name__)
+from pyrec.manager import script_path
 
 
 class State(object):
     def __init__(self):
-        self.open_dir = []  # 현재 open 되어 있는 project들
-        self.dir_path = {}  # open 되어 있는 project의 root directory, root directory 안에 .pyrec 폴더를 가짐.
-        self.open_dir = ['local']
-        self.dir_path = {'local': '!NotExist!'}
-        # TODO : 원본 file 존재 안할 때 state의 dir_path 변경 필요
-        # 저장 위치 : 'local_data': os.path.join(os.path.dirname(__file__), 'log', 'local_data')
-        # 저장 위치를 다음과 같이 분리 : log 안에 
+        self.dir_list = []  # 현재 open 되어 있는 dir들
+
+    def load(self):
+        log_path = os.path.join(script_path, 'log')
+        for ni in os.listdir(log_path):
+            self.dir_list.append(ni)
 
 
 def command_handler(matchstr):

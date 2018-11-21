@@ -16,4 +16,4 @@ if __name__ == '__main__' :
     logging.basicConfig(**kw)
     logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
     logger.info('Pyrec V0.1')
-    pyrec.manager.run()
+    pyrec.manager.run(os.path.abspath(__file__))

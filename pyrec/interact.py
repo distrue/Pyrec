@@ -38,13 +38,16 @@ def function_connect(state, query):
     except QueryError:
         return state
     try:
+        if(query_list[0] not in commands):
+            logger.info('uncensored query ' + query_list[0])
+            return state
         state = commands[query_list[0]](state, query_list)
-        return state
-    except KeyError:
-        logger.info("unsensored query [" + query_list[0] + "]")
         return state
     except QueryError:
         return state
+    except SystemExit:
+        logger.info('System Exit')
+        raise SystemExit
     except:
         logger.error(getTracebackStr())
         return state

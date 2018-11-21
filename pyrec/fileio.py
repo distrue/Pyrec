@@ -1,7 +1,7 @@
 import os
 import logging
 import json
-logger = logging.getlogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def top_path(OS_type):
@@ -30,7 +30,6 @@ class OpenFile():
         self.open_type = open_type
         self.file_path = file_abspath
         if(not os.path.isdir(os.path.dirname(self.file_path))):
-            print(os.path.isdir(os.path.dirname(self.file_path)), os.path.dirname(self.file_path), self.file_path)
             os.makedirs(os.path.dirname(self.file_path))
         if(not os.path.exists(self.file_path)):
             f = open(self.file_path, 'w')

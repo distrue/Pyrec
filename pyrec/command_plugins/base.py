@@ -5,8 +5,19 @@ from pyrec.interact import command_handler, root_path
 from pyrec.fileio import OpenFile
 logger = logging.getLogger(__name__)
 from .parse import lookup_dir
+# s_script package 상위 import
+# 상위 package를 import 하는 경우 다음과 같이 새로 package를 로드 하는 형식으로 import 한다
 from pyrec.signals import QueryError
+# 상위 package의 함수를 import 하는 경우 직접적인 조상 tree 구조에 속하지 않는 것이 좋다.
+# 직접적인 조상 자식의 관계의 경우 error는 발생하지 않으나, 인자로 값을 내려보내주는 것으로도 대체할 수 있다.
+# 인자로 내려주고, return에 담는 경우는 함수 종료 후 값이 바뀌도록 확실하게 지정해줄 수 있다.
+# 직접적으로 상위의 data를 불러오는 경우에는 값의 변경이 불가능하다. / 정적인 단순 data에 대해서만 적용 가능하다.
+# 이 경우 loop이 발생하지 않는 이유는 위 package를 다시 호출하지 않고, memory에 로드된 package를 사용하기 때문이다.
+# TODO : 상위 package 로드 test 구성하기
 from pyrec.manager import script_path
+# 위와 같이 직접적인 상위 package의 element를 가져오는 경우에는 error가 발생하지는 않는다.
+# 이 떄 상위 package의 data는 import 될 때 열려있는 상위 package에 직접적으로 연결된다.
+# e_script
 
 
 @command_handler('pwd')

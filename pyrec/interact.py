@@ -7,15 +7,21 @@ from .signals import QueryError, getTracebackStr
 root_path = os.path.dirname(__file__)
 commands = {}
 logger = logging.getLogger(__name__)
-from pyrec.manager import script_path
+# s_script errorshoot_cycle import
+# package import 내에서 cycle이 발생하는 경우가 있다. 이 경우는 error 발생, 이를 방지하기 위해서 각 file의 위상 설정이 필요하다.
+# ex) from pyrec.manager import script_path -> 이미 manager에서 현재 file을 import하고 있기 때문에 import 하면 안된다.
+# package 내의 package 에서 상위의 함수가 필요한 경우는 package 순회 중의 loop가 발생하지 않으므로 영향을 받지 않는다.
+# 이 경우에 하위 package에서 import 한 값은 import 지점에서 값이 바뀌면 같이 값이 바뀐다.
+# e_script
 
 
 class State(object):
-    def __init__(self):
+    def __init__(self, script_path):
         self.dir_list = []  # 현재 open 되어 있는 dir들
+        self.script_path = script_path
 
     def load(self):
-        log_path = os.path.join(script_path, 'log')
+        log_path = os.path.join(self.script_path, 'log')
         for ni in os.listdir(log_path):
             self.dir_list.append(ni)
 

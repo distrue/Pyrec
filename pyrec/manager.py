@@ -3,11 +3,12 @@ import importlib
 import os
 script_path = ''
 
+
 def run(_script_path):
-    state = State()
     global script_path
     script_path = os.path.dirname(_script_path)
     from . import command_plugins
+    state = State(script_path)
     state.load()
     #command_plugins = importlib.import_module('')
     while(True):  # console

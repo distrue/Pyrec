@@ -35,13 +35,18 @@ class OpenFile():
             f = open(self.file_path, 'w')
             f.write('')
             f.close()
-        self.fd = open(self.file_path, self.open_type)
+        if(self.open_type == 'rb' or self.open_type == 'wb'):
+            # does not support encoding
+            self.fd = open(self.file_path, self.open_type)
+        else:
+            self.fd = open(self.file_path, self.open_type, encoding='utf-8')
 
     def read(self, data_type='text/plain'):
-        if(self.open_type != 'r' and self.open_type != 'rb'):
+        if(self.open_type != 'r' and self.open_type != 'rb' and self.open_type != 'rt'):
             logger.error('File is not opened with read mode')
             return
         # TODO : encoding type 추가
+        # TODO : 한글 data 보여주기, 전반 처리!
 
         if(self.open_type == 'r'):
             dump = self.fd.read()
@@ -53,6 +58,8 @@ class OpenFile():
             else:
                 logger.info('unknown open type; opened by text/plain')
 
+        elif(self.open_type == 'rb'):
+            dump = self.fd.read()
         return dump
 
     def readuntil (self, ustr):
@@ -65,6 +72,7 @@ class OpenFile():
         out = ""
         while (True):
             c = self.fd.read(1)
+            # TODO : 한글 data 처리
             if (c == ""):
                 self.EOF = True
                 return out

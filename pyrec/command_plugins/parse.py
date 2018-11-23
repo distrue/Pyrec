@@ -39,6 +39,7 @@ def file_parse(path, d_dict, file_type):
         return d_dict
     with OpenFile() as f:
         f.open(path, 'r')
+        # TODO : data parse 오토마타 구성
         while(not f.EOF):
             f.readuntil(anno[0])
             if(f.EOF):
@@ -47,6 +48,6 @@ def file_parse(path, d_dict, file_type):
             ndump = dump.split('\n')[0]
             d_dict.append({'title': ndump, 'data': ''.join(dump.split(ndump)[1:])})
             if(f.EOF):
-                # TODO : e_script 종료 제대로 되지 않음, error!
+                #  e_script 종료 제대로 되지 않음, error!
                 pass
     return d_dict

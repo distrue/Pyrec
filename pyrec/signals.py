@@ -27,4 +27,4 @@ class QueryError(Exception):
 
 
 signal.signal(signal.SIGINT, sigint_handler)  # sigint_handler
-# TODO : windows sigint?
+# TODO : windows sigint problem

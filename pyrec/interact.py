@@ -21,6 +21,7 @@ class State(object):
         self.script_path = script_path
 
     def load(self):
+        self.dir_list = []
         log_path = os.path.join(self.script_path, 'log')
         for ni in os.listdir(log_path):
             self.dir_list.append(ni)

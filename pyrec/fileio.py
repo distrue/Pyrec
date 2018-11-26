@@ -38,13 +38,12 @@ class OpenFile():
         self.fd = open(self.file_path, self.open_type)
 
     def read(self, data_type='text/plain'):
-        if(self.open_type != 'r' and self.open_type != 'rb'):
-            logger.error('File is not opened with read mode')
-            return
-        # TODO : encoding type 추가
-
         if(self.open_type == 'r'):
             dump = self.fd.read()
+            # s_script \xa0 non-breaking space encode error python
+            # \xa0 처리 (non-breaking space)
+            dump.replace(u'\xa0', '')
+            # e_script
             if(data_type == 'text/plain'):
                 pass
             elif(data_type == 'application/json'):
@@ -52,6 +51,10 @@ class OpenFile():
                 dump = json.loads(dump)
             else:
                 logger.info('unknown open type; opened by text/plain')
+
+        else:
+            logger.error('File is not opened with read mode')
+            return
 
         return dump
 
@@ -78,18 +81,16 @@ class OpenFile():
         return out
 
 
-    def write(self, dump, data_type):
-        if(self.open_type != 'w' and self.open_type != 'wb'):
-            print('File is not opened with write mode')  # TODO : Log로 전환
-            return
-        if(not data_type):  # TODO : data_type **arg로 전환
-            data_type = 'text/plain'
-        # TODO : encoding type 지정
+    def write(self, dump, *, data_type='text/plain'):
+        if(self.open_type == 'w'):
+            if(data_type == 'text/plain' and self.open_type == 'w'):
+                self.fd.write(dump)
+            if(data_type == 'application/json' and self.open_type == 'w'):
+                dump = json.dumps(dump)
+                self.fd.write(dump)
 
-        if(data_type == 'text/plain' and self.open_type == 'w'):
-            self.fd.write(dump)
-        if(data_type == 'application/json' and self.open_type == 'w'):
-            dump = json.dumps(dump)
-            self.fd.write(dump)
+        else:
+            logger.info('File is not opened with available write mode(\'w\')')
+            return
 
         return 'Write success'

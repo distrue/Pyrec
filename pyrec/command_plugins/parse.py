@@ -41,6 +41,7 @@ def file_parse(path, d_dict, file_type):
 
     with OpenFile() as f:
         f.open(path, 'r')
+        # TODO : data parse 오토마타 구성
         while(not f.EOF):
             f.readuntil(anno[0])
             if(f.EOF):

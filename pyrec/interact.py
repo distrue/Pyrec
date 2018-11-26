@@ -23,8 +23,10 @@ class State(object):
     def load(self):
         self.dir_list = []
         log_path = os.path.join(self.script_path, 'log')
-        for ni in os.listdir(log_path):
-            self.dir_list.append(ni)
+        if(os.path.exists(log_path)):
+            for ni in os.listdir(log_path):
+                if(ni not in self.dir_list):
+                    self.dir_list.append(ni)
 
 
 def command_handler(matchstr):

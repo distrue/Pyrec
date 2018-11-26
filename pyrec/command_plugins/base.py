@@ -13,7 +13,6 @@ from pyrec.signals import QueryError
 # 인자로 내려주고, return에 담는 경우는 함수 종료 후 값이 바뀌도록 확실하게 지정해줄 수 있다.
 # 직접적으로 상위의 data를 불러오는 경우에는 값의 변경이 불가능하다. / 정적인 단순 data에 대해서만 적용 가능하다.
 # 이 경우 loop이 발생하지 않는 이유는 위 package를 다시 호출하지 않고, memory에 로드된 package를 사용하기 때문이다.
-# TODO : 상위 package 로드 test 구성하기
 from pyrec.manager import script_path
 # 위와 같이 직접적인 상위 package의 element를 가져오는 경우에는 error가 발생하지는 않는다.
 # 이 떄 상위 package의 data는 import 될 때 열려있는 상위 package에 직접적으로 연결된다.
@@ -137,9 +136,18 @@ def find_script(state, query_list):
             break
         else:
             with OpenFile() as f:
-                f.open(ans_list[x-1][1], 'r')
+                # s_script encode_problem
+                # cp-949 encode file error, 'rt' 로 조치한다.
+                # str(dump, 'utf-8') -> unicode decode 해서 보여줄 떄 사용
+                f.open(ans_list[x-1][1], 'rb')
                 dump = f.read('text/plain')
-                logger.info('data\n' + dump)
+                # print('data\n' + dump.decode('utf-8'))
+                # UnicodeEncodeError: 'cp949' codec can't encode character '\xa0' in position 131: illegal multibyte sequence
+                dump = dump.decode('utf-8')
+                print(u"\xa0")
+                # TODO : unicode error shoot, \xa0 is one of bytes which can't be decoded by (x).decode('utf-8')
+                print(dump)
+                # e_script
     return state
 
 

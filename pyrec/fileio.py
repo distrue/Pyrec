@@ -86,7 +86,7 @@ class OpenFile():
         return out
 
 
-    def write(self, dump, *, data_type='text/plain'):
+    def write(self, dump, data_type='text/plain'):
         if(self.open_type == 'w'):
             if(data_type == 'text/plain' and self.open_type == 'w'):
                 self.fd.write(dump)

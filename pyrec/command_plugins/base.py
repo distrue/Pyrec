@@ -134,20 +134,13 @@ def find_script(state, query_list):
             continue
         if(x == 0):
             break
+        elif(x >= cou):
+            logger.info("out of range")
         else:
             with OpenFile() as f:
-                # s_script encode_problem
-                # cp-949 encode file error, 'rt' 로 조치한다.
-                # str(dump, 'utf-8') -> unicode decode 해서 보여줄 떄 사용
-                f.open(ans_list[x-1][1], 'rb')
+                f.open(ans_list[x-1][1], 'r')
                 dump = f.read('text/plain')
-                # print('data\n' + dump.decode('utf-8'))
-                # UnicodeEncodeError: 'cp949' codec can't encode character '\xa0' in position 131: illegal multibyte sequence
-                dump = dump.decode('utf-8')
-                print(u"\xa0")
-                # TODO : unicode error shoot, \xa0 is one of bytes which can't be decoded by (x).decode('utf-8')
-                print(dump)
-                # e_script
+                logger.info('data\n' + dump)
     return state
 
 

@@ -34,6 +34,7 @@ def file_parse(path, d_dict, file_type):
     parse_type = {}
     parse_type['pyrec'] = ('# s_script', '# e_script')
     parse_type['py'] = ('# s_script', '# e_script')
+    parse_type['js'] = ('// s_script', '// e_script')
     if(file_type not in parse_type):
         return d_dict
     else:

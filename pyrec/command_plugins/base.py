@@ -96,6 +96,7 @@ def refresh(state, query_list):
 
 @command_handler('show_dirs')
 def dir_check(state, query_list):
+    state.load()
     prstr = '<<dir lists>>\n'
     cou = 0
     for ni in state.dir_list:
@@ -105,42 +106,6 @@ def dir_check(state, query_list):
             prstr += '\n'
         cou += 1
     logger.info(prstr)
-    return state
-
-
-@command_handler('find_script')
-def find_script(state, query_list):
-    if(len(query_list) <= 1):
-        raise QueryError("find_script", "missing operator : name")
-    log_path = os.path.join(script_path, 'log')
-    ans_list = []
-    for ni in state.dir_list:
-        dir_path = os.path.join(log_path, ni, 'script')
-        for fi in os.listdir(dir_path):
-            if(query_list[1] in fi):
-                ans_list.append([ni + ' / \'' + fi + '\'', os.path.join(dir_path, fi)])
-    while(True):
-        logger.info("[script_show]0 : stop script_show")
-        cou = 1
-        for ni in ans_list:
-            logger.info('[script_show]' + str(cou) + ' : ' + ni[0])
-            cou += 1
-        logger.info('[script_show] which script want to see?(in number)')
-        x = input()
-        try:
-            x = int(x)
-        except:
-            logger.error("input must be integer type")
-            continue
-        if(x == 0):
-            break
-        elif(x >= cou):
-            logger.info("out of range")
-        else:
-            with OpenFile() as f:
-                f.open(ans_list[x-1][1], 'r')
-                dump = f.read('text/plain')
-                logger.info('data\n' + dump)
     return state
 
 

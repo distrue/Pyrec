@@ -4,6 +4,20 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def load_script(record_path, dump):
+    for iname in dump:
+        # script.json 처리
+        ipath = os.path.join(record_path, iname['title'])
+        cou = 1
+        while(os.path.exists(ipath)):
+            ipath = os.path.join(record_path, iname['title'] + '.' + str(cou))
+            cou += 1
+        with OpenFile() as f:
+            f.open(ipath, 'w')
+            f.write(iname['data'], 'text/plain')
+        # TODO : keyword.json 처리
+
+
 def lookup_dir(record_path, path, ignore):
     if(os.path.isdir(path)):
         for i in os.listdir(path):
@@ -17,17 +31,7 @@ def lookup_dir(record_path, path, ignore):
         dump = file_parse(path, [], file_type)
         if(dump):
             logger.info(path)
-        for iname in dump:
-            # script.json 처리
-            ipath = os.path.join(record_path, iname['title'])
-            cou = 1
-            while(os.path.exists(ipath)):
-                ipath = os.path.join(record_path, iname['title'] + '.' + str(cou))
-                cou += 1
-            with OpenFile() as f:
-                f.open(ipath, 'w')
-                f.write(iname['data'], 'text/plain')
-            # TODO : keyword.json 처리
+        load_script(record_path, dump)
 
 
 def file_parse(path, d_dict, file_type):
